@@ -67,11 +67,13 @@ After all transactions have been received: run Ctrl+C to exit the process and th
 
 
 ## FURTHER IMPROVEMENT
- - Add Unit and Integrated tests for producer/consumer => fake/mock kafka
  - Add schema validation (Avro/JSON Schema) => Schema versioning
+ - Add backpressure handling to producer
  - Add error categorization in DLQ
- - Add retry mechanism for producer and consumer
+ - Add retry mechanism for producer (to do) and consumer (done)
+ - Add Unit and Integrated tests for producer/consumer => fake/mock kafka
+
 
 ## COMMENTS
 
-Logs were added for demonstration purpose
+ - Logs were added for demonstration purpose only

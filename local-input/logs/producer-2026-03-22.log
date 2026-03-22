@@ -70,3 +70,60 @@
 2026-03-22T15:58:30.267Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
 2026-03-22T15:58:30.269Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
 2026-03-22T15:58:30.269Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T16:12:20.567Z [INFO]: Starting CSV producer...
+2026-03-22T16:12:20.588Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T16:12:20.601Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T16:12:20.602Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T16:12:20.602Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T16:12:20.602Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T16:12:20.906Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:12:20.907Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:12:20.907Z [ERROR]: Error processing queue for artificial-test-transactions-1.csv: The producer is disconnected
+2026-03-22T16:12:20.920Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:12:20.921Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:12:20.922Z [ERROR]: Error processing queue for artificial-test-transactions-2.csv: The producer is disconnected
+2026-03-22T16:12:20.956Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:12:20.956Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:12:20.957Z [ERROR]: Error processing queue for artificial-test-transactions.csv: The producer is disconnected
+2026-03-22T16:14:54.231Z [INFO]: Starting CSV producer...
+2026-03-22T16:14:54.250Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T16:14:54.261Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T16:14:54.262Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T16:14:54.263Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T16:14:54.263Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T16:14:54.578Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:14:54.579Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:14:54.580Z [ERROR]: Error processing queue for artificial-test-transactions-2.csv: The producer is disconnected
+2026-03-22T16:14:54.625Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:14:54.625Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:14:54.626Z [ERROR]: Error processing queue for artificial-test-transactions.csv: The producer is disconnected
+2026-03-22T16:14:55.244Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:14:55.245Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:14:55.245Z [ERROR]: Error processing queue for artificial-test-transactions-1.csv: The producer is disconnected
+2026-03-22T16:15:12.701Z [INFO]: Starting CSV producer...
+2026-03-22T16:15:12.802Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T16:15:12.813Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T16:15:12.813Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T16:15:12.814Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T16:15:12.814Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T16:15:13.081Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:15:13.081Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:15:13.082Z [ERROR]: Error processing queue for artificial-test-transactions-1.csv: The producer is disconnected
+2026-03-22T16:15:13.090Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:15:13.090Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:15:13.091Z [ERROR]: Error processing queue for artificial-test-transactions.csv: The producer is disconnected
+2026-03-22T16:15:13.161Z [INFO]: Total Kafka queue lag: 3 messages
+2026-03-22T16:15:13.161Z [ERROR]: Failed to send batch: The producer is disconnected
+2026-03-22T16:15:13.161Z [ERROR]: Error processing queue for artificial-test-transactions-2.csv: The producer is disconnected
+2026-03-22T16:18:07.385Z [INFO]: Starting CSV producer...
+2026-03-22T16:18:07.414Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T16:18:07.455Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T16:18:07.459Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T16:18:07.463Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T16:18:07.463Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T16:21:49.905Z [INFO]: Starting CSV producer...
+2026-03-22T16:21:49.920Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T16:21:49.958Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T16:21:49.960Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T16:21:49.960Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T16:21:49.961Z [INFO]: Producer disconnected. All files processed.
