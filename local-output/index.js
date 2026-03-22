@@ -80,7 +80,7 @@ function writeRow(state, payload) {
   state.stream.write(row);
 }
 
-function addToDlq(msg, err, attempt) {
+function addToDLQ(msg, err, attempt) {
   const entry = {
     timestamp: new Date().toISOString(),
     partition: msg.partition,
@@ -130,7 +130,7 @@ async function processMessageWithRetries(msg, maxRetries = 3) {
     } catch (err) {
       logger.warn(`Process message failed (attempt ${attempt}/${maxRetries})`, err);
       if (attempt >= maxRetries) {
-        addToDlq(msg, err, attempt);
+        addToDLQ(msg, err, attempt);
         // don't retry after DLQ write; bail out
         bail(err);
         return;
