@@ -1,191 +1,188 @@
 const { Kafka } = require('kafkajs');
 const fs = require('fs');
 const path = require('path');
+const retry = require('async-retry');
+const winston = require('winston');
+require('winston-daily-rotate-file');
 
-// Kafka configuration
+// Ensure logs directory exists
+if (!fs.existsSync('logs')) {
+  fs.mkdirSync('logs', { recursive: true });
+}
+
+// Daily rolling log setup
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+    })
+  ),
+  transports: [
+    new winston.transports.DailyRotateFile({
+      filename: 'logs/consumer-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      maxSize: '20m',
+      maxFiles: '14d'
+    }),
+    new winston.transports.Console()
+  ]
+});
+
 const kafka = new Kafka({
   clientId: 'csv-consumer',
-  brokers: ['localhost:9092'], // Default Kafka broker address
+  brokers: ['localhost:9092'],
 });
 
 const consumer = kafka.consumer({ groupId: 'csv-reconstruction-group' });
 
-// Store to collect messages by source file
-const fileData = new Map();
-let totalMessagesReceived = 0;
-let totalFilesReconstructed = 0;
+const DLQ_PATH = path.join(__dirname, 'dead-letter-queue.jsonl');
 
-// Function to convert JSON object to CSV row
-function jsonToCSVRow(jsonObj) {
-  const values = Object.values(jsonObj).map(value => {
-    // Handle values that might contain commas or quotes
-    if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
-      return `"${value.replace(/"/g, '""')}"`;
-    }
-    return value;
+// Per-file state
+const fileState = new Map();
+
+/*
+fileState structure:
+{
+  file1.csv: {
+    stream,
+    expectedRow: 0,
+    buffer: Map<rowNumber, payload>,
+    headersWritten: false
+  }
+}
+*/
+
+function initFile(fileId, payload) {
+  const outputPath = path.join(__dirname, fileId);
+
+  const stream = fs.createWriteStream(outputPath);
+
+  fileState.set(fileId, {
+    stream,
+    expectedRow: 0,
+    buffer: new Map(),
+    headersWritten: false,
   });
-  return values.join(',');
+
+  return fileState.get(fileId);
 }
 
-// Function to reconstruct CSV file
-function reconstructCSVFile(filename, messages) {
-  try {
-    // Sort messages by their original row index (extracted from key)
-    const sortedMessages = messages.sort((a, b) => {
-      const aIndex = parseInt(a.key.split('-').pop());
-      const bIndex = parseInt(b.key.split('-').pop());
-      return aIndex - bIndex;
-    });
-
-    // Get headers from the first message
-    const firstMessage = sortedMessages[0];
-    const headers = Object.keys(firstMessage.value);
-    const csvContent = [headers.join(',')];
-
-    // Add data rows
-    sortedMessages.forEach(message => {
-      const csvRow = jsonToCSVRow(message.value);
-      csvContent.push(csvRow);
-    });
-
-    // Write to file
-    const outputPath = path.join(__dirname, filename);
-    fs.writeFileSync(outputPath, csvContent.join('\n'));
-    
-    console.log(`✅ Reconstructed ${filename} with ${sortedMessages.length} data rows`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Error reconstructing ${filename}:`, error);
-    return false;
+function writeRow(state, payload) {
+  if (!state.headersWritten) {
+    const headers = Object.keys(payload).join(',') + '\n';
+    state.stream.write(headers);
+    state.headersWritten = true;
   }
+
+  const row = Object.values(payload).join(',') + '\n';
+  state.stream.write(row);
 }
 
-// Function to process received messages
-async function processMessages() {
-  console.log('🔄 Processing received messages...');
-  
-  for (const [filename, messages] of fileData.entries()) {
-    if (reconstructCSVFile(filename, messages)) {
-      totalFilesReconstructed++;
+function addToDlq(msg, err, attempt) {
+  const entry = {
+    timestamp: new Date().toISOString(),
+    partition: msg.partition,
+    offset: msg.offset,
+    attempt,
+    error: err.message || String(err),
+    message: msg.value.toString(),
+  };
+
+  fs.appendFileSync(DLQ_PATH, JSON.stringify(entry) + '\n', { encoding: 'utf8' });
+  logger.error(`DLQ write: partition ${msg.partition}, offset ${msg.offset}, attempt ${attempt}`);
+}
+
+function processMessage(msg) {
+  logger.info(`Received message: partition ${msg.partition}, offset ${msg.offset}`);
+  const { fileId, rowNumber, payload } = JSON.parse(msg.value.toString());
+
+  let state = fileState.get(fileId);
+  if (!state) {
+    state = initFile(fileId, payload);
+  }
+
+  // If correct order → write immediately
+  if (rowNumber === state.expectedRow) {
+    writeRow(state, payload);
+    state.expectedRow++;
+
+    // flush buffer if possible
+    while (state.buffer.has(state.expectedRow)) {
+      const buffered = state.buffer.get(state.expectedRow);
+      state.buffer.delete(state.expectedRow);
+
+      writeRow(state, buffered);
+      state.expectedRow++;
     }
+
+  } else {
+    // out-of-order → buffer
+    state.buffer.set(rowNumber, payload);
   }
-  
-  console.log(`\n📊 Summary:`);
-  console.log(`   Total messages received: ${totalMessagesReceived}`);
-  console.log(`   Files reconstructed: ${totalFilesReconstructed}`);
-  console.log(`   Files in queue: ${fileData.size}`);
 }
 
-// Main consumer function
+async function processMessageWithRetries(msg, maxRetries = 3) {
+  await retry(async (bail, attempt) => {
+    try {
+      processMessage(msg);
+    } catch (err) {
+      logger.warn(`Process message failed (attempt ${attempt}/${maxRetries})`, err);
+      if (attempt >= maxRetries) {
+        addToDlq(msg, err, attempt);
+        // don't retry after DLQ write; bail out
+        bail(err);
+        return;
+      }
+      throw err;
+    }
+  }, {
+    retries: maxRetries - 1,
+    factor: 2,
+    minTimeout: 100,
+    maxTimeout: 1000,
+  });
+}
+
 async function main() {
-  try {
-    console.log('🚀 Starting CSV reconstruction consumer...');
-    
-    // Connect to Kafka
-    await consumer.connect();
-    console.log('✅ Connected to Kafka');
+  logger.info('Starting CSV consumer...');
+  await consumer.connect();
 
-    // Subscribe to the raw-transactions topic
-    await consumer.subscribe({ 
-      topic: 'raw-transactions',
-      fromBeginning: true // Start from the beginning to catch all messages
-    });
-    console.log('📡 Subscribed to raw-transactions topic');
+  await consumer.subscribe({
+    topic: 'raw-transactions',
+    fromBeginning: true,
+  });
 
-    // Start consuming messages
-    await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
-        try {
-          totalMessagesReceived++;
-          
-          // Parse the message
-          const key = message.key.toString();
-          const value = JSON.parse(message.value.toString());
-          const headers = message.headers;
-          
-          // Extract source filename from headers
-          const sourceFile = headers.source ? headers.source.toString() : 'unknown.csv';
-          
-          console.log(`📨 Received message ${totalMessagesReceived}: ${key} from ${sourceFile}`);
-          
-          // Group messages by source file
-          if (!fileData.has(sourceFile)) {
-            fileData.set(sourceFile, []);
-          }
-          
-          fileData.get(sourceFile).push({
-            key: key,
-            value: value,
-            headers: headers,
-            partition: partition,
-            offset: message.offset
-          });
-          
-          // Show progress every 10 messages
-          if (totalMessagesReceived % 10 === 0) {
-            console.log(`📈 Progress: ${totalMessagesReceived} messages received, ${fileData.size} files in queue`);
-          }
-          
-        } catch (error) {
-          console.error('❌ Error processing message:', error);
-        }
-      },
-    });
+  await consumer.run({
+    eachBatch: async ({ batch, resolveOffset, commitOffsetsIfNecessary }) => {
+      for (const message of batch.messages) {
+        await processMessageWithRetries(message, 3);
+        resolveOffset(message.offset);
+      }
 
-  } catch (error) {
-    console.error('❌ Error in consumer:', error);
-  }
+      await commitOffsetsIfNecessary();
+    },
+  });
 }
 
-// Function to handle graceful shutdown
-async function gracefulShutdown() {
-  console.log('\n🛑 Shutting down gracefully...');
-  
-  // Process any remaining messages
-  if (fileData.size > 0) {
-    console.log('🔄 Processing remaining messages before shutdown...');
-    await processMessages();
+// Graceful shutdown
+async function shutdown() {
+  logger.info('Shutting down consumer...');
+
+  for (const { stream } of fileState.values()) {
+    stream.end();
   }
-  
-  // Disconnect from Kafka
+
   await consumer.disconnect();
-  console.log('✅ Disconnected from Kafka');
-  console.log('👋 Consumer shutdown complete');
 }
 
-// Handle graceful shutdown signals
-process.on('SIGINT', async () => {
-  console.log('\n📡 Received SIGINT, shutting down gracefully...');
-  await gracefulShutdown();
-  process.exit(0);
-});
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
 
-process.on('SIGTERM', async () => {
-  console.log('\n📡 Received SIGTERM, shutting down gracefully...');
-  await gracefulShutdown();
-  process.exit(0);
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', async (error) => {
-  console.error('💥 Uncaught Exception:', error);
-  await gracefulShutdown();
-  process.exit(1);
-});
-
-process.on('unhandledRejection', async (reason, promise) => {
-  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
-  await gracefulShutdown();
-  process.exit(1);
-});
-
-// Run the main function
 if (require.main === module) {
-  main().catch(async (error) => {
-    console.error('💥 Fatal error:', error);
-    await gracefulShutdown();
+  main().catch((err) => {
+    logger.error('Consumer error:', err);
     process.exit(1);
   });
 }
-
-module.exports = { main, processMessages, reconstructCSVFile };

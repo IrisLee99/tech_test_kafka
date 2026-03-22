@@ -1,127 +1,117 @@
-const { Kafka } = require('kafkajs');
+const { Kafka, CompressionTypes } = require('kafkajs');
 const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser');
+const winston = require('winston');
+require('winston-daily-rotate-file');
 
-// Kafka configuration
+// Ensure logs directory exists
+if (!fs.existsSync('logs')) {
+  fs.mkdirSync('logs', { recursive: true });
+}
+
 const kafka = new Kafka({
   clientId: 'csv-producer',
-  brokers: ['localhost:9092'], // Default Kafka broker address
+  brokers: ['localhost:9092'],
 });
 
 const producer = kafka.producer();
 
-// Function to read and process a single CSV file
+// Daily rolling log setup
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+    })
+  ),
+  transports: [
+    new winston.transports.DailyRotateFile({
+      filename: 'logs/producer-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      maxSize: '20m',
+      maxFiles: '14d'
+    }),
+    new winston.transports.Console()
+  ]
+});
+
+const TOPIC = 'raw-transactions';
+const BATCH_SIZE = 5;
+
+// Stream + send in batches
 async function processCSVFile(filePath) {
+  const fileName = path.basename(filePath);
+
   return new Promise((resolve, reject) => {
-    const results = [];
-    
-    fs.createReadStream(filePath)
-      .pipe(csv())
-      .on('data', (data) => {
-        results.push(data);
-      })
-      .on('end', () => {
-        console.log(`Processed ${results.length} rows from ${path.basename(filePath)}`);
-        resolve(results);
-      })
-      .on('error', (error) => {
-        console.error(`Error reading ${filePath}:`, error);
-        reject(error);
+    let rowNumber = 0;
+    let batch = [];
+
+    const stream = fs.createReadStream(filePath).pipe(csv());
+
+    stream.on('data', async (row) => {
+      stream.pause(); // backpressure control
+
+      batch.push({
+        key: fileName, // ensures same partition → ordering guarantee
+        value: JSON.stringify({
+          fileId: fileName,
+          rowNumber,
+          payload: row,
+        }),
       });
+
+      rowNumber++;
+
+      if (batch.length >= BATCH_SIZE) {
+        await sendBatch(batch);
+        batch = [];
+      }
+
+      stream.resume();
+    });
+
+    stream.on('end', async () => {
+      if (batch.length > 0) {
+        await sendBatch(batch);
+      }
+
+      logger.info(`Finished processing ${fileName} (${rowNumber} rows)`);
+      resolve();
+    });
+
+    stream.on('error', reject);
   });
 }
 
-// Function to send messages to Kafka
-async function sendToKafka(messages, sourceFile) {
-  try {
-    const kafkaMessages = messages.map((message, index) => ({
-      key: `${path.basename(sourceFile)}-${index}`, // Use filename and row index as key
-      value: JSON.stringify(message),
-      headers: {
-        source: path.basename(sourceFile),
-        timestamp: new Date().toISOString()
-      }
-    }));
-
-    await producer.send({
-      topic: 'raw-transactions',
-      messages: kafkaMessages
-    });
-
-    console.log(`Successfully sent ${kafkaMessages.length} messages from ${path.basename(sourceFile)} to raw-transactions topic`);
-  } catch (error) {
-    console.error(`Error sending messages from ${sourceFile}:`, error);
-    throw error;
-  }
+async function sendBatch(messages) {
+  await producer.send({
+    topic: TOPIC,
+    messages,
+    compression: CompressionTypes.GZIP,
+  });
 }
 
-// Main function
+// MAIN
 async function main() {
-  try {
-    console.log('Starting CSV to Kafka producer...');
-    
-    // Connect to Kafka
-    await producer.connect();
-    console.log('Connected to Kafka');
+  logger.info('Starting CSV producer...');
+  await producer.connect();
 
-    // Find all CSV files in the current directory
-    const csvFiles = fs.readdirSync(__dirname)
-      .filter(file => file.endsWith('.csv'))
-      .map(file => path.join(__dirname, file));
+  const csvFiles = fs.readdirSync(__dirname)
+    .filter(f => f.endsWith('.csv'))
+    .map(f => path.join(__dirname, f));
 
-    if (csvFiles.length === 0) {
-      console.log('No CSV files found in the current directory');
-      return;
-    }
+  logger.info(`Processing files concurrently: ${csvFiles.join(', ')}`);
 
-    console.log(`Found ${csvFiles.length} CSV files:`, csvFiles.map(f => path.basename(f)));
+  // Parallel processing
+  await Promise.all(csvFiles.map(processCSVFile));
 
-    // Process each CSV file
-    for (const csvFile of csvFiles) {
-      console.log(`\nProcessing ${path.basename(csvFile)}...`);
-      
-      try {
-        const rows = await processCSVFile(csvFile);
-        
-        if (rows.length > 0) {
-          await sendToKafka(rows, csvFile);
-        } else {
-          console.log(`No data rows found in ${path.basename(csvFile)}`);
-        }
-      } catch (error) {
-        console.error(`Failed to process ${csvFile}:`, error);
-        // Continue with other files even if one fails
-      }
-    }
+  await producer.disconnect();  logger.info('Producer disconnected. All files processed.');}
 
-    console.log('\nAll CSV files processed successfully!');
-    
-  } catch (error) {
-    console.error('Error in main process:', error);
-  } finally {
-    // Disconnect from Kafka
-    await producer.disconnect();
-    console.log('Disconnected from Kafka');
-  }
-}
-
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('\nReceived SIGINT, shutting down gracefully...');
-  await producer.disconnect();
-  process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-  console.log('\nReceived SIGTERM, shutting down gracefully...');
-  await producer.disconnect();
-  process.exit(0);
-});
-
-// Run the main function
 if (require.main === module) {
-  main().catch(console.error);
+  main().catch((err) => {
+    logger.error('Producer error:', err);
+    process.exit(1);
+  });
 }
-
-module.exports = { main, processCSVFile, sendToKafka };

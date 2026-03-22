@@ -1,0 +1,72 @@
+2026-03-22T15:11:36.146Z [INFO]: Starting CSV producer...
+2026-03-22T15:11:36.163Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:11:36.206Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:11:36.206Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:11:36.207Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:11:36.208Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:13:26.202Z [INFO]: Starting CSV producer...
+2026-03-22T15:13:26.217Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:13:26.250Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:13:26.252Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:13:26.252Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:13:26.253Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:14:12.528Z [INFO]: Starting CSV producer...
+2026-03-22T15:14:12.544Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:14:12.578Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:14:12.578Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:14:12.578Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:14:12.579Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:16:23.317Z [INFO]: Starting CSV producer...
+2026-03-22T15:16:23.333Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:16:23.368Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:16:23.368Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:16:23.368Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:16:23.369Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:27:02.739Z [INFO]: Starting CSV producer...
+2026-03-22T15:27:03.108Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:27:03.157Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:27:03.159Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:27:03.161Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:27:03.162Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:31:43.819Z [INFO]: Starting CSV producer...
+2026-03-22T15:31:44.124Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:31:44.192Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:31:44.195Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:31:44.199Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:31:44.200Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:33:54.130Z [INFO]: Starting CSV producer...
+2026-03-22T15:33:54.158Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:33:54.204Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:33:54.209Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:33:54.212Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:33:54.212Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:34:22.491Z [INFO]: Starting CSV producer...
+2026-03-22T15:34:22.588Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:34:22.662Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:34:22.707Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:34:22.718Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:34:22.719Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:34:34.939Z [INFO]: Starting CSV producer...
+2026-03-22T15:34:34.957Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:34:34.997Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:34:35.001Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:34:35.003Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:34:35.004Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:39:49.799Z [INFO]: Starting CSV producer...
+2026-03-22T15:39:49.815Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:39:49.851Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:39:49.852Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:39:49.853Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:39:49.853Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:43:07.629Z [INFO]: Starting CSV producer...
+2026-03-22T15:43:07.645Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:43:07.682Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:43:07.682Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:43:07.682Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:43:07.683Z [INFO]: Producer disconnected. All files processed.
+2026-03-22T15:58:30.204Z [INFO]: Starting CSV producer...
+2026-03-22T15:58:30.223Z [INFO]: Processing files concurrently: /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-1.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions-2.csv, /Users/LIJIE01/Downloads/interview_tech_test_kafka/local-input/artificial-test-transactions.csv
+2026-03-22T15:58:30.267Z [INFO]: Finished processing artificial-test-transactions-1.csv (20 rows)
+2026-03-22T15:58:30.267Z [INFO]: Finished processing artificial-test-transactions.csv (20 rows)
+2026-03-22T15:58:30.269Z [INFO]: Finished processing artificial-test-transactions-2.csv (20 rows)
+2026-03-22T15:58:30.269Z [INFO]: Producer disconnected. All files processed.
